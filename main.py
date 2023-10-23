@@ -2,6 +2,7 @@ from fastapi import FastAPI
 import psycopg2
 from dotenv import dotenv_values
 from pydantic import BaseModel
+import traceback
 
 config = dotenv_values(".env")
 
@@ -33,19 +34,20 @@ def root():
 def get_workers():
     try:
         cursor.execute("""
-            SELECT firstName, position, phone
+            SELECT id, firstName, position, phone
             FROM worker;
         """)
         result = cursor.fetchall()
         list_workers = []
         for worker in result:
-            list_workers.append({
-                "firstName": worker[0],
-                "position": worker[1],
-                "phone": worker[2]
-            })
+            list_workers.append(vm_get_workers(
+                id=worker[0],
+                firstName=worker[1],
+                position=worker[2],
+                phone=worker[3]
+            ))
 
         return {"workers": list_workers}
-    except Exception as e:
-        return {"error": e}
+    except:
+        return {"error": traceback.format_exc()}
 
