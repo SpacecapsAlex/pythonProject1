@@ -37,6 +37,17 @@ class vm_get_worker(BaseModel):
     departmentName: str
 
 
+class vm_add_worker(BaseModel):
+    firstName: str
+    surName: str
+    email: str
+    phone: str
+    address: str
+    position: str
+    salary: float
+    department_id: int
+
+
 @app.get("/")
 def root():
     return {"message": "Start Server"}
@@ -86,6 +97,20 @@ def get_worker(worker_id: int):
             departmentName=result[8]
         )
         return {"worker": worker}
+    except:
+        return {"error": traceback.format_exc()}
+
+
+@app.post("/add-worker")
+def add_worker(worker: vm_add_worker):
+    try:
+        cursor.execute(f"""
+            INSERT INTO worker (firstName, surName, email, phone, address, position, salary, department_id)
+            VALUES ('{worker.firstName}', '{worker.surName}', '{worker.email}', '{worker.phone}', '{worker.address}', '{worker.position}', {worker.salary}, {worker.department_id});
+        """)
+        connect.commit()
+
+        return {"message": "Success"}
     except:
         return {"error": traceback.format_exc()}
 
