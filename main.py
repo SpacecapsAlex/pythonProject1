@@ -114,3 +114,14 @@ def add_worker(worker: vm_add_worker):
     except:
         return {"error": traceback.format_exc()}
 
+
+@app.delete("/delete-worker/{worker_id}")
+def delete_worker(worker_id: int):
+    try:
+        cursor.execute(f"""
+            DELETE FROM worker
+            WHERE id = {worker_id};
+        """)
+        connect.commit()
+    except:
+        return {"error": traceback.format_exc()}
