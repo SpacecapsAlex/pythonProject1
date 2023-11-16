@@ -18,6 +18,14 @@ cursor = connect.cursor()
 
 app = FastAPI()
 
+
+class vm_post_trainner(BaseModel):
+    title: str
+    description: str
+    start_date: str
+    end_date: str
+    employee_id: int
+
 class vm_get_workers(BaseModel):
     id: int
     firstName: str
@@ -125,3 +133,22 @@ def delete_worker(worker_id: int):
         connect.commit()
     except:
         return {"error": traceback.format_exc()}
+
+
+@app.post("/post-trainner")
+def post_trainner(trainner: vm_post_trainner):
+    try:
+        cursor.execute(f"""
+            INSERT INTO trainner (title, description, start_date, end_date, employee_id)
+            VALUES ('{trainner.title}', '{trainner.description}', '{trainner.start_date}', '{trainner.end_date}', {trainner.employee_id});
+        """)
+        connect.commit()
+
+        return {"message": "Success"}
+    except:
+        return {"error": traceback.format_exc()}
+
+
+# Employee (Id, firstName, surName, email, phone, address, position, salary, department_id)
+# Trainner (Id, title, description, start_date, end_date, employee_id)
+# Trainner(employee_id) - Employee(id)
